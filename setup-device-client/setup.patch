@@ -1,0 +1,20 @@
+--- a/setup.sh	1970-01-01 08:00:01.000000000 +0800
++++ b/setup.sh	2022-01-18 20:54:18.559566936 +0800
+@@ -325,8 +325,6 @@
+   FOUND_DEVICE_CLIENT=false
+   DEVICE_CLIENT_ARTIFACT_DEFAULT="./build/aws-iot-device-client"
+   while [ "$FOUND_DEVICE_CLIENT" != true ]; do
+-    printf ${PMPT} "Enter the complete directory path for the aws-iot-device-client. (Empty for default: ${DEVICE_CLIENT_ARTIFACT_DEFAULT})"
+-    read -r DEVICE_CLIENT_ARTIFACT
+     if [ -z "$DEVICE_CLIENT_ARTIFACT" ]; then
+       DEVICE_CLIENT_ARTIFACT="$DEVICE_CLIENT_ARTIFACT_DEFAULT"
+     fi
+@@ -341,8 +339,6 @@
+   FOUND_SERVICE_FILE=false
+   SERVICE_FILE_DEFAULT="./setup/aws-iot-device-client.service"
+   while [ "$FOUND_SERVICE_FILE" != true ]; do
+-    printf ${PMPT} "Enter the complete directory path for the aws-iot-device-client service file. (Empty for default: ${SERVICE_FILE_DEFAULT})"
+-    read -r SERVICE_FILE
+     if [ -z "$SERVICE_FILE" ]; then
+       SERVICE_FILE="$SERVICE_FILE_DEFAULT"
+     fi

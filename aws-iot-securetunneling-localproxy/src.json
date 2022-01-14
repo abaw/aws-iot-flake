@@ -1,0 +1,9 @@
+{
+    "owner": "aws-samples",
+    "repo": "aws-iot-securetunneling-localproxy",
+    "rev": "8ae39755a8cbba67a95d1369d03a2c85c9288693",
+    "sha256": "4ARql460/g8c7Kal1FLCDr9OUuIwPv7ZvOttI+KF3+Q=",
+    "fetchSubmodules": true,
+    "leaveDotGit": false,
+    "deepClone": false
+}

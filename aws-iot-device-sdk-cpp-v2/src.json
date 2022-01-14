@@ -1,0 +1,9 @@
+{
+    "owner": "aws",
+    "repo": "aws-iot-device-sdk-cpp-v2",
+    "rev": "a73593d1003e2b231c6db53710aa6c75d8196b1f",
+    "sha256": "MRBBnAhORB/twFm/IXvHDanC1NvCTAqDo+e5eZjpFmk=",
+    "fetchSubmodules": true,
+    "leaveDotGit": false,
+    "deepClone": false
+}

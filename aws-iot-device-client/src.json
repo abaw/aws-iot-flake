@@ -1,0 +1,9 @@
+{
+    "owner": "awslabs",
+    "repo": "aws-iot-device-client",
+    "rev": "2790c41a954f38119cd3c87015ecf77aec28dbc8",
+    "sha256": "zIdnniBthjHn6KNrn7RdVO9K7L3/w3TYYHM1Pxk1Whg=",
+    "fetchSubmodules": true,
+    "leaveDotGit": false,
+    "deepClone": false
+}

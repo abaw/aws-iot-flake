@@ -1,0 +1,26 @@
+--- a/src/Makefile.am	1970-01-01 08:00:01.000000000 +0800
++++ b/src/Makefile.am	2022-01-23 01:25:54.550937179 +0800
+@@ -172,7 +172,12 @@
+   google/protobuf/util/type_resolver_util.h                      \
+   google/protobuf/util/message_differencer.h
+ 
++if USE_EXTERNAL_PROTOC
++lib_LTLIBRARIES = libprotobuf-lite.la libprotobuf.la
++else
+ lib_LTLIBRARIES = libprotobuf-lite.la libprotobuf.la libprotoc.la
++endif
++
+ 
+ libprotobuf_lite_la_LIBADD = $(PTHREAD_LIBS) $(LIBATOMIC_LIBS)
+ libprotobuf_lite_la_LDFLAGS = -version-info $(PROTOBUF_VERSION) -export-dynamic -no-undefined
+@@ -478,7 +483,10 @@
+   google/protobuf/compiler/csharp/csharp_wrapper_field.cc      \
+   google/protobuf/compiler/csharp/csharp_wrapper_field.h
+ 
++if USE_EXTERNAL_PROTOC
++else
+ bin_PROGRAMS = protoc
++endif
+ protoc_LDADD = $(PTHREAD_LIBS) libprotobuf.la libprotoc.la
+ protoc_SOURCES = google/protobuf/compiler/main.cc
+ 

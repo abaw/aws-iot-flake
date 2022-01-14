@@ -1,0 +1,11 @@
+--- a/libs/math/build/Jamfile.v2	2022-01-22 22:29:52.089590802 +0800
++++ b/libs/math/build/Jamfile.v2	2022-01-22 22:29:01.481453912 +0800
+@@ -14,7 +14,7 @@
+       #<toolset>intel-linux:<pch>off
+       <toolset>intel-darwin:<pch>off
+       <toolset>msvc-7.1:<pch>off
+-      <toolset>gcc,<target-os>windows:<pch>off
++      <toolset>gcc:<pch>off
+       #<toolset>gcc:<cxxflags>-fvisibility=hidden
+       <toolset>intel-linux:<cxxflags>-fvisibility=hidden
+       #<toolset>sun:<cxxflags>-xldscope=hidden

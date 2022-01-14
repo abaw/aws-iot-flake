@@ -1,0 +1,33 @@
+diff -bru /nix/store/rjzg6g6jv5vv42kx0x3jzzg43871pqm5-source/source/shadow/SampleShadowFeature.cpp source/shadow/SampleShadowFeature.cpp
+--- a/source/shadow/SampleShadowFeature.cpp	1970-01-01 08:00:01.000000000 +0800
++++ b/source/shadow/SampleShadowFeature.cpp	2022-01-22 19:45:37.334062895 +0800
+@@ -9,6 +9,7 @@
+ #include <chrono>
+ #include <iostream>
+ #include <string>
++#include <thread>
+ #include <sys/stat.h>
+ #include <unistd.h>
+ #include <utility>
+diff -bru /nix/store/rjzg6g6jv5vv42kx0x3jzzg43871pqm5-source/source/util/FileUtils.h source/util/FileUtils.h
+--- a/source/source/util/FileUtils.h	1970-01-01 08:00:01.000000000 +0800
++++ b/source/util/FileUtils.h	2022-01-22 19:39:16.317324997 +0800
+@@ -6,6 +6,7 @@
+ 
+ #include <aws/common/byte_buf.h>
+ #include <string>
++#include <sys/stat.h>
+ 
+ namespace Aws
+ {
+diff -bru /nix/store/rjzg6g6jv5vv42kx0x3jzzg43871pqm5-source/source/util/Retry.cpp source/util/Retry.cpp
+--- a/source/source/util/Retry.cpp	1970-01-01 08:00:01.000000000 +0800
++++ b/source/util/Retry.cpp	2022-01-22 19:49:57.429550290 +0800
+@@ -3,6 +3,7 @@
+ 
+ #include "Retry.h"
+ #include "../logging/LoggerFactory.h"
++#include <thread>
+ 
+ using namespace std;
+ using namespace Aws::Iot::DeviceClient::Logging;
