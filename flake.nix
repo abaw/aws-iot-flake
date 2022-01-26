@@ -16,8 +16,6 @@
         #         sed -i -e "/^dependency_libs=/s#/.*/libstdc++.la#-lstdc++#" src/.libs/libprotobuf{,-lite}.lai
         #       '';
         #     });
-        aws-iot-device-sdk-cpp-v2 = super.callPackage ./aws-iot-device-sdk-cpp-v2/. { stdenv = super.clangStdenv; };
-        aws-iot-device-client = self.callPackage ./aws-iot-device-client/. {};
         aws-iot-securetunneling-localproxy =
           let
             boost = self.boost177;
@@ -28,6 +26,13 @@
               ./aws-iot-securetunneling-localproxy/. {
                 inherit boost protobuf buildProtobuf;
               };
+      } // super.lib.optionalAttrs (super.stdenv.isLinux) {
+        aws-iot-device-sdk-cpp-v2 = super.callPackage
+          ./aws-iot-device-sdk-cpp-v2/.
+          (super.lib.optionalAttrs super.stdenv.isAarch64
+            { stdenv = super.clangStdenv; }
+          );
+        aws-iot-device-client = self.callPackage ./aws-iot-device-client/. {};
       };
     in
       {
@@ -42,23 +47,26 @@
             start-tunnel = python.pkgs.callPackage ./start-tunnel/. {};
             ipython-boto3 = python.withPackages (ps: with ps; [ipython boto3]);
           in
+            with pkgs;
             rec {
               packages = {
-                sdk-cpp-v2 = pkgs.aws-iot-device-sdk-cpp-v2;
-                device-client = pkgs.aws-iot-device-client;
-                inherit setup-device-client;
-                localproxy = pkgs.aws-iot-securetunneling-localproxy;
+                localproxy = aws-iot-securetunneling-localproxy;
                 inherit start-tunnel;
+              } // lib.optionalAttrs (pkgs ? aws-iot-device-sdk-cpp-v2) {
+                sdk-cpp-v2 = aws-iot-device-sdk-cpp-v2;
+                device-client = aws-iot-device-client;
+                inherit setup-device-client;
               };
 
               apps = {
-                device-client = {
-                  type = "app";
-                  program = "${packages.device-client}/bin/aws-iot-device-client";
-                };
                 localproxy = {
                   type = "app";
                   program ="${packages.localproxy}/bin/localproxy";
+                };
+              } // lib.optionalAttrs (packages ? device-client) {
+                device-client = {
+                  type = "app";
+                  program = "${packages.device-client}/bin/aws-iot-device-client";
                 };
               };
             }
