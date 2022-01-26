@@ -8,6 +8,11 @@ Nix flakes for AWS IoT Core packages
 ## Prerequisites
 - Install Nix by following the instructions:
   <https://nixos.org/manual/nix/stable/installation/installing-binary.html>
+  
+- Enable nix flake feature by adding a file `~/.config/nix/nix.conf` with the
+  following contents:
+  
+        experimental-features = nix-command flakes
 
 ## AWS IoT Secure Tunnelling
 You could learn what's AWS IoT Secure Tunnelling at: <https://docs.aws.amazon.com/iot/latest/developerguide/secure-tunneling.html>.
