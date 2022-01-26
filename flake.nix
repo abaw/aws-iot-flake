@@ -16,7 +16,7 @@
         #         sed -i -e "/^dependency_libs=/s#/.*/libstdc++.la#-lstdc++#" src/.libs/libprotobuf{,-lite}.lai
         #       '';
         #     });
-        aws-iot-device-sdk-cpp-v2 = super.callPackage ./aws-iot-device-sdk-cpp-v2/. {};
+        aws-iot-device-sdk-cpp-v2 = super.callPackage ./aws-iot-device-sdk-cpp-v2/. { stdenv = super.clangStdenv; };
         aws-iot-device-client = self.callPackage ./aws-iot-device-client/. {};
         aws-iot-securetunneling-localproxy =
           let
