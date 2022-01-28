@@ -14,6 +14,18 @@ Nix flakes for AWS IoT Core packages
   
         experimental-features = nix-command flakes
 
+## Development with aws-iot-device-sdk-cpp-v2
+You will dropped in a shell where everything for developing with
+aws-iot-device-sdk-cpp-v2 is available:
+
+    >nix develop github:abaw/aws-iot-flake#sdk-cpp-v2-dev
+    # In this shell, cmake and the SDK are installed so that `find_package(aws-crt-cpp)` works in CMakeLists.txt.
+    # You could try with the sample app: https://github.com/aws/aws-iot-device-sdk-cpp-v2/tree/main/samples/mqtt/basic_pub_sub
+    >cd <path-to-sample>
+    >mkdir build
+    >cmake ..
+    >cmake --build .
+    
 ## AWS IoT Secure Tunnelling
 You could learn what's AWS IoT Secure Tunnelling at: <https://docs.aws.amazon.com/iot/latest/developerguide/secure-tunneling.html>.
 

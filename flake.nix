@@ -69,6 +69,12 @@
                   program = "${packages.device-client}/bin/aws-iot-device-client";
                 };
               };
+
+              devShells = lib.optionalAttrs (packages ? sdk-cpp-v2) {
+                sdk-cpp-v2-dev = mkShell {
+                  buildInputs = [ clang cmake packages.sdk-cpp-v2 ];
+                };
+              };
             }
          );
 }
