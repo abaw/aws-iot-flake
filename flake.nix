@@ -6,33 +6,33 @@
   };
   outputs = { self, nixpkgs, flake-utils }:
     let
-      overlay = self: super: {
-        boost177 = (super.callPackage ./boost/. {}).boost177;
-        # protobuf3_17 = super.protobuf3_17.overrideAttrs
+      overlay = final: prev: {
+        boost177 = (prev.callPackage ./boost/. {}).boost177;
+        # protobuf3_17 = prev.protobuf3_17.overrideAttrs
         #   (old:
         #     {
         #       patches = [ ./protobuf.patch ];
-        #       postBuild = super.lib.optionalString super.stdenv.hostPlatform.isStatic ''
+        #       postBuild = prev.lib.optionalString prev.stdenv.hostPlatform.isStatic ''
         #         sed -i -e "/^dependency_libs=/s#/.*/libstdc++.la#-lstdc++#" src/.libs/libprotobuf{,-lite}.lai
         #       '';
         #     });
         aws-iot-securetunneling-localproxy =
           let
-            boost = self.boost177;
-            protobuf = self.protobuf3_17;
-            buildProtobuf = self.buildPackages.protobuf3_17;
+            boost = final.boost177;
+            protobuf = final.protobuf3_17;
+            buildProtobuf = final.buildPackages.protobuf3_17;
           in
-            super.callPackage
+            prev.callPackage
               ./aws-iot-securetunneling-localproxy/. {
                 inherit boost protobuf buildProtobuf;
               };
-      } // super.lib.optionalAttrs (super.stdenv.isLinux) {
-        aws-iot-device-sdk-cpp-v2 = super.callPackage
+      } // prev.lib.optionalAttrs (prev.stdenv.isLinux) {
+        aws-iot-device-sdk-cpp-v2 = prev.callPackage
           ./aws-iot-device-sdk-cpp-v2/.
-          (super.lib.optionalAttrs super.stdenv.isAarch64
-            { stdenv = super.clangStdenv; }
+          (prev.lib.optionalAttrs prev.stdenv.isAarch64
+            { stdenv = prev.clangStdenv; }
           );
-        aws-iot-device-client = self.callPackage ./aws-iot-device-client/. {};
+        aws-iot-device-client = final.callPackage ./aws-iot-device-client/. {};
       };
     in
       {
@@ -46,6 +46,13 @@
             setup-device-client = pkgs.callPackage ./setup-device-client/. {};
             start-tunnel = python.pkgs.callPackage ./start-tunnel/. {};
             ipython-boto3 = python.withPackages (ps: with ps; [ipython boto3]);
+            mkCheck = pkg: command:
+              pkgs.runCommandNoCC pkg.name {
+                buildInputs = [pkg];
+              } ''
+              ${command}
+              touch $out
+              '';
           in
             with pkgs;
             rec {
@@ -56,6 +63,24 @@
                 sdk-cpp-v2 = aws-iot-device-sdk-cpp-v2;
                 device-client = aws-iot-device-client;
                 inherit setup-device-client;
+              };
+
+              checks = lib.overrideExisting packages {
+                localproxy = mkCheck packages.localproxy "localproxy --help";
+                start-tunnel = mkCheck packages.start-tunnel "start-tunnel --help";
+                device-client = mkCheck packages.device-client "aws-iot-device-client --help";
+                sdk-cpp-v2 =
+                  let
+                    sdk = packages.sdk-cpp-v2;
+                  in
+                    runCommandCC "sdk-cpp-v2" {
+                      buildInputs = [  sdk cmake ];
+                    } ''
+                    cmake ${sdk.src}/samples/mqtt/basic_pub_sub
+                    cmake --build .
+                    [ -x basic-pub-sub ]
+                    touch $out
+                    '';
               };
 
               apps = {

@@ -41,6 +41,10 @@ def start_tunnel(session: boto3.session.Session, thing: str, port: int):
 
 def main():
   try:
+    if sys.argv[1] in ("-h", "--help"):
+      usage()
+      return
+
     region, thing, port = sys.argv[1:]
   except:
     usage()
