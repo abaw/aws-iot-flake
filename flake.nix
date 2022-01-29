@@ -70,15 +70,12 @@
                 start-tunnel = mkCheck packages.start-tunnel "start-tunnel --help";
                 device-client = mkCheck packages.device-client "aws-iot-device-client --help";
                 sdk-cpp-v2 =
-                  let
-                    sdk = packages.sdk-cpp-v2;
-                  in
                     runCommandCC "sdk-cpp-v2" {
-                      buildInputs = [  sdk cmake ];
+                      buildInputs = devShells.dev-sdk-cpp-v2.buildInputs;
                     } ''
-                    cmake ${sdk.src}/samples/mqtt/basic_pub_sub
+                    cmake ${packages.sdk-cpp-v2.src}/samples/greengrass/ipc
                     cmake --build .
-                    [ -x basic-pub-sub ]
+                    ./greengrass-ipc --help
                     touch $out
                     '';
               };
@@ -96,8 +93,8 @@
               };
 
               devShells = lib.optionalAttrs (packages ? sdk-cpp-v2) {
-                sdk-cpp-v2-dev = mkShell {
-                  buildInputs = [ clang cmake packages.sdk-cpp-v2 ];
+                dev-sdk-cpp-v2 = mkShell {
+                  buildInputs = [ cmake packages.sdk-cpp-v2 ];
                 };
               };
             }

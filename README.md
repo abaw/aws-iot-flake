@@ -3,7 +3,7 @@ Nix flakes for AWS IoT Core packages
 
 ## Supported platforms
 - MacOS x86-64
-- Linux x86-64
+- Linux x86-64/aarch64
 
 ## Prerequisites
 - Install Nix by following the instructions:
@@ -18,7 +18,7 @@ Nix flakes for AWS IoT Core packages
 You will dropped in a shell where everything for developing with
 aws-iot-device-sdk-cpp-v2 is available:
 
-    >nix develop github:abaw/aws-iot-flake#sdk-cpp-v2-dev
+    >nix develop github:abaw/aws-iot-flake#dev-sdk-cpp-v2
     # In this shell, cmake and the SDK are installed so that `find_package(aws-crt-cpp)` works in CMakeLists.txt.
     # You could try with the sample app: https://github.com/aws/aws-iot-device-sdk-cpp-v2/tree/main/samples/mqtt/basic_pub_sub
     >cd <path-to-sample>
