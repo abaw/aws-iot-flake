@@ -26,14 +26,19 @@
               ./aws-iot-securetunneling-localproxy/. {
                 inherit boost protobuf buildProtobuf;
               };
-      } // prev.lib.optionalAttrs (prev.stdenv.isLinux) {
-        aws-iot-device-sdk-cpp-v2 = prev.callPackage
-          ./aws-iot-device-sdk-cpp-v2/.
-          (prev.lib.optionalAttrs prev.stdenv.isAarch64
-            { stdenv = prev.clangStdenv; }
-          );
-        aws-iot-device-client = final.callPackage ./aws-iot-device-client/. {};
-      };
+        aws-iot-device-sdk-cpp-v2 =
+          let
+            darwin-attrs = { inherit (prev.darwin.apple_sdk.frameworks) Security; };
+            aarch64-attrs =
+              prev.lib.optionalAttrs
+                prev.stdenv.isAarch64
+                { stdenv = prev.clangStdenv; };
+          in
+            prev.callPackage ./aws-iot-device-sdk-cpp-v2/. (darwin-attrs // aarch64-attrs );
+      } // prev.lib.optionalAttrs (prev.stdenv.isLinux)
+        {
+          aws-iot-device-client = final.callPackage ./aws-iot-device-client/. {};
+        };
     in
       {
         inherit overlay;
@@ -59,8 +64,8 @@
               packages = {
                 localproxy = aws-iot-securetunneling-localproxy;
                 inherit start-tunnel;
-              } // lib.optionalAttrs (pkgs ? aws-iot-device-sdk-cpp-v2) {
                 sdk-cpp-v2 = aws-iot-device-sdk-cpp-v2;
+              } // lib.optionalAttrs (pkgs ? aws-iot-device-client) {
                 device-client = aws-iot-device-client;
                 inherit setup-device-client;
               };
@@ -92,7 +97,7 @@
                 };
               };
 
-              devShells = lib.optionalAttrs (packages ? sdk-cpp-v2) {
+              devShells = {
                 dev-sdk-cpp-v2 = mkShell {
                   buildInputs = [ cmake packages.sdk-cpp-v2 ];
                 };

@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchFromGitHub, cmake, openssl }:
+{ lib, stdenv, fetchFromGitHub, cmake, openssl, Security }:
 let
   json = lib.importJSON ./src.json;
 in
@@ -7,5 +7,6 @@ stdenv.mkDerivation rec {
   version = json.rev;
   nativeBuildInputs = [ cmake ];
   buildInputs = [ openssl ];
+  propagatedBuildInputs = lib.optionals stdenv.isDarwin [ Security ];
   src = fetchFromGitHub json;
 }
