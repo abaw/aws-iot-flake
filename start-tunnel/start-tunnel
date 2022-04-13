@@ -5,6 +5,7 @@ import boto3
 import json
 import subprocess
 import sys
+import time
 
 localproxy_path = <LOCALPROXY_PATH>
 
@@ -28,15 +29,31 @@ def verify_thing(session: boto3.session.Session, thing: str):
 def start_tunnel(session: boto3.session.Session, thing: str, port: int):
   iot_st = session.client('iotsecuretunneling')
   resp = iot_st.open_tunnel(destinationConfig={"thingName": thing, "services": ["SSH"]})
-  print("Started tunnel: {}".format(resp["tunnelId"]))
+  tunnel_id = resp["tunnelId"]
+  src_token = resp["sourceAccessToken"]
+  print("Started tunnel: {}".format(tunnel_id))
   try:
-    subprocess.call(args=[localproxy_path, "-r", session.region_name, "-s", port], env= { "AWSIOT_TUNNEL_ACCESS_TOKEN": resp["sourceAccessToken"]})
-    pass
+    print("Waiting for destination to connect...", end="", flush=True)
+    dest_connected = False
+    now = time.time()
+    expired = now + 30 # FIXME: pass timeout through the command line
+    while now < expired:
+      resp = iot_st.describe_tunnel(tunnelId=tunnel_id)
+      if resp["tunnel"]["destinationConnectionState"]["status"] == "CONNECTED":
+        dest_connected = True
+        break
+      now = time.time()
+
+    if dest_connected:
+      print("O.K.")
+      subprocess.call(args=[localproxy_path, "-r", session.region_name, "-s", port], env= { "AWSIOT_TUNNEL_ACCESS_TOKEN": src_token})
+    else:
+      print("Timeout!")
   except KeyboardInterrupt:
     pass
   finally:
     print("Closing tunnel..", end="", flush=True)
-    iot_st.close_tunnel(tunnelId = resp["tunnelId"])
+    iot_st.close_tunnel(tunnelId=tunnel_id)
     print("done")
 
 def main():
